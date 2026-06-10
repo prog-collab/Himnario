@@ -212,6 +212,20 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
 }
 .boletin-grupo:first-child { margin-top: .2rem; }
 
+/* ── Buscador propio de la sección Boletines ── */
+.boletin-buscador { margin-bottom: .4rem; }
+#campo-boletines {
+  width: 100%; font-family: inherit; font-size: 1.1rem;
+  padding: .55rem .9rem;
+  border: 1.5px solid var(--linea); border-radius: 6px;
+  background: var(--papel-tarjeta); color: var(--tinta);
+}
+#campo-boletines:focus { border-color: var(--dorado); outline: none; }
+.boletin-ayuda { font-size: .82rem; color: var(--tinta-suave); margin: .35rem .1rem 0; font-style: italic; }
+.boletin-resumen { font-size: .92rem; color: var(--tinta-suave); margin: .8rem .1rem .4rem; }
+.boletin-coincidencia { display: block; color: var(--tinta-suave); font-size: .9rem; margin-top: .3rem; line-height: 1.4; }
+.boletin-coincidencia mark { background: var(--coro-fondo); color: inherit; font-weight: 600; padding: 0 .1em; border-radius: 2px; }
+
 
 /* ── Modo presentación ── */
 #presentacion {

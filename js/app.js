@@ -99,18 +99,35 @@ function mostrarTemas() {
   ).join('');
 }
 
+/* ── Boletines: índice de texto cargado bajo demanda ── */
+let BOL_TEXTO = null;        // { archivo: textoOriginal }
+let BOL_TEXTO_NORM = null;   // { archivo: textoNormalizado }
+let bolCargando = false;
+let bolTemporizador;
+
 function mostrarBoletines() {
   if (typeof BOLETINES === 'undefined' || !BOLETINES.length) {
     contenido.innerHTML = `<p class="mensaje-vacio">Los boletines van a estar disponibles próximamente.</p>`;
     return;
   }
-  const tarjeta = b =>
-    `<a class="boletin" href="${b.archivo}" target="_blank" rel="noopener">
-       <span class="boletin-titulo">${b.titulo}</span>
-       <span class="boletin-fecha">${b.fecha || ''}</span>
-       ${b.descripcion ? `<p class="boletin-descripcion">${b.descripcion}</p>` : ''}
-     </a>`;
-  // Agrupar por el campo "grupo" (si existe), conservando el orden de aparición
+  contenido.innerHTML = `
+    <div class="boletin-buscador">
+      <input id="campo-boletines" type="search" inputmode="search" autocomplete="off"
+             placeholder="Buscar una palabra dentro de los boletines…" aria-label="Buscar dentro de los boletines">
+      <p class="boletin-ayuda">Busca en el texto de los ${BOLETINES.length} documentos. La primera búsqueda descarga el índice (unos segundos, solo una vez).</p>
+    </div>
+    <div id="boletines-resultado"></div>`;
+  const c = document.getElementById('campo-boletines');
+  c.addEventListener('input', () => {
+    clearTimeout(bolTemporizador);
+    bolTemporizador = setTimeout(() => buscarBoletines(c.value), 200);
+  });
+  renderListaBoletines();
+}
+
+function renderListaBoletines() {
+  const caja = document.getElementById('boletines-resultado');
+  if (!caja) return;
   const grupos = [];
   const indice = {};
   for (const b of BOLETINES) {
@@ -118,10 +135,76 @@ function mostrarBoletines() {
     if (!(g in indice)) { indice[g] = grupos.length; grupos.push({ nombre: g, items: [] }); }
     grupos[indice[g]].items.push(b);
   }
-  contenido.innerHTML = grupos.map(gr =>
+  caja.innerHTML = grupos.map(gr =>
     `${gr.nombre ? `<h2 class="boletin-grupo">${gr.nombre}</h2>` : ''}
-     <div class="boletin-lista">${gr.items.map(tarjeta).join('')}</div>`
+     <div class="boletin-lista">${gr.items.map(b =>
+       `<a class="boletin" href="${b.archivo}" target="_blank" rel="noopener">
+          <span class="boletin-titulo">${b.titulo}</span>
+          <span class="boletin-fecha">${b.fecha || ''}</span>
+          ${b.descripcion ? `<p class="boletin-descripcion">${b.descripcion}</p>` : ''}
+        </a>`).join('')}</div>`
   ).join('');
+}
+
+function escaparRegExp(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+async function buscarBoletines(consulta) {
+  const caja = document.getElementById('boletines-resultado');
+  if (!caja) return;
+  const q = consulta.trim();
+  if (q.length < 2) { renderListaBoletines(); return; }
+
+  if (!BOL_TEXTO) {
+    if (bolCargando) return;
+    bolCargando = true;
+    caja.innerHTML = `<p class="mensaje-vacio">Descargando índice de búsqueda…</p>`;
+    try {
+      const resp = await fetch('datos/boletines-texto.json');
+      BOL_TEXTO = await resp.json();
+      BOL_TEXTO_NORM = {};
+      for (const k in BOL_TEXTO) BOL_TEXTO_NORM[k] = normalizar(BOL_TEXTO[k]);
+    } catch (e) {
+      BOL_TEXTO = null; bolCargando = false;
+      caja.innerHTML = `<p class="mensaje-vacio">No se pudo cargar el índice de búsqueda.<br>Hace falta internet la primera vez.</p>`;
+      return;
+    }
+    bolCargando = false;
+    const actual = document.getElementById('campo-boletines');
+    if (actual && actual.value.trim() !== q) { buscarBoletines(actual.value); return; }
+  }
+
+  const qn = normalizar(q);
+  const reHi = new RegExp(escaparRegExp(q), 'gi');
+  const resultados = [];
+  for (const b of BOLETINES) {
+    const norm = BOL_TEXTO_NORM[b.archivo];
+    if (!norm) continue;
+    let pos = norm.indexOf(qn);
+    if (pos < 0) continue;
+    let n = 0, i = pos;
+    while (i >= 0) { n++; i = norm.indexOf(qn, i + qn.length); }
+    const orig = BOL_TEXTO[b.archivo] || '';
+    const desde = Math.max(0, pos - 40);
+    const crudo = orig.substring(desde, pos + qn.length + 70).replace(/\s+/g, ' ').trim();
+    const visible = crudo.replace(reHi, m => `<mark>${m}</mark>`);
+    resultados.push({ b, n, snippet: visible });
+  }
+
+  if (!resultados.length) {
+    caja.innerHTML = `<p class="mensaje-vacio">Ningún boletín contiene «${q}».<br>Probá con otra palabra.</p>`;
+    return;
+  }
+  const total = resultados.reduce((s, r) => s + r.n, 0);
+  let html = `<p class="boletin-resumen">${resultados.length} documento${resultados.length !== 1 ? 's' : ''} · ${total} coincidencia${total !== 1 ? 's' : ''} para «${q}»</p>`;
+  html += `<div class="boletin-lista">` + resultados.map(r => {
+    const meta = `${r.b.fecha ? r.b.fecha + ' · ' : ''}${r.n} coincidencia${r.n !== 1 ? 's' : ''}`;
+    return `<a class="boletin" href="${r.b.archivo}" target="_blank" rel="noopener">
+       <span class="boletin-titulo">${r.b.titulo}</span>
+       <span class="boletin-fecha">${meta}</span>
+       <span class="boletin-coincidencia">…${r.snippet}…</span>
+     </a>`;
+  }).join('') + `</div>`;
+  caja.innerHTML = html;
 }
 
 /* ════════════ BÚSQUEDA ════════════ */
@@ -175,6 +258,8 @@ campo.addEventListener('input', () => {
 
 /* ════════════ PESTAÑAS ════════════ */
 function renderVista() {
+  // El buscador de himnos no aplica en la sección Boletines (tiene el suyo propio)
+  $('#campo-busqueda').classList.toggle('oculto', vistaActual === 'boletines');
   ({ todos: mostrarTodos, temas: mostrarTemas, favoritos: mostrarFavoritos,
      recientes: mostrarRecientes, boletines: mostrarBoletines }[vistaActual])();
 }
