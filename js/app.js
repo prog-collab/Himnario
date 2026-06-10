@@ -104,12 +104,23 @@ function mostrarBoletines() {
     contenido.innerHTML = `<p class="mensaje-vacio">Los boletines van a estar disponibles próximamente.</p>`;
     return;
   }
-  contenido.innerHTML = BOLETINES.map(b =>
+  const tarjeta = b =>
     `<a class="boletin" href="${b.archivo}" target="_blank" rel="noopener">
        <span class="boletin-titulo">${b.titulo}</span>
        <span class="boletin-fecha">${b.fecha || ''}</span>
        ${b.descripcion ? `<p class="boletin-descripcion">${b.descripcion}</p>` : ''}
-     </a>`
+     </a>`;
+  // Agrupar por el campo "grupo" (si existe), conservando el orden de aparición
+  const grupos = [];
+  const indice = {};
+  for (const b of BOLETINES) {
+    const g = b.grupo || '';
+    if (!(g in indice)) { indice[g] = grupos.length; grupos.push({ nombre: g, items: [] }); }
+    grupos[indice[g]].items.push(b);
+  }
+  contenido.innerHTML = grupos.map(gr =>
+    `${gr.nombre ? `<h2 class="boletin-grupo">${gr.nombre}</h2>` : ''}
+     <div class="boletin-lista">${gr.items.map(tarjeta).join('')}</div>`
   ).join('');
 }
 

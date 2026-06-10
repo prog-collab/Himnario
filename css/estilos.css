@@ -203,6 +203,16 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
 .boletin-fecha { color: var(--tinta-suave); font-size: .88rem; font-style: italic; }
 .boletin-descripcion { font-size: .95rem; margin-top: .25rem; color: var(--tinta-suave); }
 
+/* ── Encabezados de grupo en Boletines ── */
+.boletin-grupo {
+  font-family: "Playfair Display", serif;
+  font-size: 1.2rem; color: var(--bordo); font-weight: 700;
+  margin: 1.4rem 0 .7rem; padding-bottom: .3rem;
+  border-bottom: 2px solid var(--dorado);
+}
+.boletin-grupo:first-child { margin-top: .2rem; }
+
+
 /* ── Modo presentación ── */
 #presentacion {
   position: fixed; inset: 0; z-index: 100;
