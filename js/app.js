@@ -362,8 +362,10 @@ $('#btn-siguiente').addEventListener('click', () => himnoAbierto && abrirHimno(h
 
 // Botón "atrás" del navegador / celular
 window.addEventListener('popstate', ev => {
-  if (ev.state && ev.state.himno) abrirHimno(ev.state.himno, false);
-  else cerrarHimno();
+  const st = ev.state || {};
+  if (st.himno) { cerrarFiliales(); abrirHimno(st.himno, false); }
+  else if (st.filiales) { abrirFiliales(false); }
+  else { cerrarHimno(); cerrarFiliales(); }
 });
 
 /* ── Tamaño de letra ── */
@@ -431,13 +433,83 @@ document.addEventListener('keydown', ev => {
   if (ev.key === 'Escape') cerrarPresentacion();
 });
 
+/* ════════════ FILIALES (Asamblea Cristiana) ════════════ */
+const vistaFiliales = $('#vista-filiales');
+let filialesInit = false, filTemporizador;
+
+function initFiliales() {
+  if (filialesInit || typeof FILIALES === 'undefined') return;
+  filialesInit = true;
+  const sel = $('#fil-prov');
+  const provincias = [...new Set(FILIALES.map(f => f.prov))].sort((a, b) => a.localeCompare(b, 'es'));
+  sel.insertAdjacentHTML('beforeend', provincias.map(p => `<option value="${p}">${p}</option>`).join(''));
+  const conRetardo = () => { clearTimeout(filTemporizador); filTemporizador = setTimeout(renderFiliales, 150); };
+  sel.addEventListener('change', renderFiliales);
+  $('#fil-ciudad').addEventListener('input', conRetardo);
+  $('#fil-dir').addEventListener('input', conRetardo);
+}
+
+function mapaURL(f) {
+  const q = [f.dir, f.ciudad, f.prov, 'Argentina'].filter(Boolean).join(', ');
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+}
+
+function renderFiliales() {
+  const caja = $('#fil-resultado'); if (!caja) return;
+  const prov = $('#fil-prov').value;
+  const qc = normalizar($('#fil-ciudad').value.trim());
+  const qd = normalizar($('#fil-dir').value.trim());
+  const lista = (typeof FILIALES === 'undefined' ? [] : FILIALES).filter(f =>
+    (!prov || f.prov === prov) &&
+    (!qc || normalizar(f.ciudad).includes(qc)) &&
+    (!qd || normalizar(f.dir).includes(qd))
+  );
+  $('#fil-resumen').textContent = `${lista.length} filial${lista.length !== 1 ? 'es' : ''}${prov ? ' en ' + prov : ''}`;
+  if (!lista.length) {
+    caja.innerHTML = `<p class="mensaje-vacio">No se encontraron filiales con esos filtros.</p>`;
+    return;
+  }
+  caja.innerHTML = lista.map(f =>
+    `<a class="filial" href="${mapaURL(f)}" target="_blank" rel="noopener" title="Ver en el mapa">
+       <span class="filial-nombre">${f.nombre}</span>
+       <span class="filial-dir">${f.dir || 'Sin dirección'}</span>
+       <span class="filial-meta">${f.ciudad ? f.ciudad + ' · ' : ''}${f.prov}</span>
+     </a>`
+  ).join('');
+}
+
+function abrirFiliales(registrar = true) {
+  initFiliales();
+  cerrarPresentacion();
+  himnoAbierto = null;
+  vistaHimno.classList.add('oculto');
+  $('#buscador').classList.add('oculto');
+  contenido.classList.add('oculto');
+  vistaFiliales.classList.remove('oculto');
+  window.scrollTo(0, 0);
+  renderFiliales();
+  if (registrar) history.pushState({ filiales: true }, '', '#filiales');
+}
+function cerrarFiliales() {
+  vistaFiliales.classList.add('oculto');
+  $('#buscador').classList.remove('oculto');
+  contenido.classList.remove('oculto');
+}
+$('#btn-filiales').addEventListener('click', () => abrirFiliales());
+$('#btn-filiales-volver').addEventListener('click', () => history.length > 1 ? history.back() : cerrarFiliales());
+
 /* ════════════ ARRANQUE ════════════ */
 // Si la URL trae #N, abrir ese himno directamente
-const hash = parseInt(location.hash.slice(1), 10);
+const hashStr = location.hash.slice(1);
+const hash = parseInt(hashStr, 10);
 if (hash >= 1 && hash <= 400) {
   renderVista();
   abrirHimno(hash, false);
   history.replaceState({ himno: hash }, '', '#' + hash);
+} else if (hashStr === 'filiales') {
+  renderVista();
+  abrirFiliales(false);
+  history.replaceState({ filiales: true }, '', '#filiales');
 } else {
   renderVista();
 }

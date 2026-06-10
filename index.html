@@ -24,6 +24,13 @@
   </div>
   <div class="cabecera-acciones">
     <button id="btn-tema" class="btn-icono" aria-label="Cambiar modo claro u oscuro" title="Modo claro / oscuro">◐</button>
+    <button id="btn-filiales" class="btn-icono" aria-label="Filiales y direcciones" title="Filiales · direcciones">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2.2v3.6M10.3 4h3.4"/>
+        <path d="M12 6 5 11v10.5h14V11z"/>
+        <path d="M9.3 21.5v-4.2a2.7 2.7 0 0 1 5.4 0v4.2"/>
+      </svg>
+    </button>
   </div>
 </header>
 
@@ -65,6 +72,23 @@
   </nav>
 </article>
 
+<!-- ══════════ VISTA FILIALES ══════════ -->
+<section id="vista-filiales" class="oculto" aria-label="Filiales">
+  <div class="filiales-barra">
+    <button id="btn-filiales-volver" class="btn-icono" aria-label="Volver">←</button>
+    <h2 class="filiales-titulo">Filiales · Asamblea Cristiana</h2>
+  </div>
+  <div class="filiales-filtros">
+    <select id="fil-prov" aria-label="Filtrar por provincia">
+      <option value="">Todas las provincias</option>
+    </select>
+    <input id="fil-ciudad" type="search" inputmode="search" autocomplete="off" placeholder="Ciudad…" aria-label="Filtrar por ciudad">
+    <input id="fil-dir" type="search" inputmode="search" autocomplete="off" placeholder="Dirección…" aria-label="Filtrar por dirección">
+  </div>
+  <p id="fil-resumen" class="filiales-resumen"></p>
+  <div id="fil-resultado"></div>
+</section>
+
 <!-- ══════════ MODO PRESENTACIÓN ══════════ -->
 <div id="presentacion" class="oculto" role="dialog" aria-label="Modo presentación">
   <button id="pres-cerrar" aria-label="Salir de presentación">✕</button>
@@ -82,6 +106,7 @@
 <script src="datos/himnos.js"></script>
 <script src="datos/temas.js"></script>
 <script src="datos/boletines.js"></script>
+<script src="datos/filiales.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

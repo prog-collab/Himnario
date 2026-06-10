@@ -272,3 +272,33 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
   body { font-size: 20px; }
   .himno-titulo { font-size: 1.7rem; }
 }
+
+/* ── Acciones de cabecera e ícono de iglesia ── */
+.cabecera-acciones { display: flex; align-items: center; gap: .25rem; }
+#btn-filiales { display: inline-flex; align-items: center; justify-content: center; padding: .3rem .5rem; }
+#btn-filiales svg { display: block; color: #f7f0e2; }
+#btn-filiales:hover svg { color: var(--dorado-suave); }
+
+/* ── Pantalla de Filiales ── */
+#vista-filiales { padding: .2rem 0 2rem; }
+.filiales-barra { display: flex; align-items: center; gap: .6rem; padding: .3rem 0 .7rem; }
+.filiales-barra .btn-icono { color: var(--tinta); border-color: var(--linea); }
+.filiales-titulo { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; color: var(--bordo); }
+[data-tema="oscuro"] .filiales-titulo { color: var(--dorado-suave); }
+.filiales-filtros { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .6rem; }
+.filiales-filtros select, .filiales-filtros input {
+  flex: 1 1 30%; min-width: 8.5rem; font-family: inherit; font-size: 1rem;
+  padding: .5rem .7rem; border: 1.5px solid var(--linea); border-radius: 6px;
+  background: var(--papel-tarjeta); color: var(--tinta);
+}
+.filiales-filtros select:focus, .filiales-filtros input:focus { border-color: var(--dorado); outline: none; }
+.filiales-resumen { font-size: .9rem; color: var(--tinta-suave); margin: .2rem .1rem .6rem; }
+.filial {
+  display: block; background: var(--papel-tarjeta); color: var(--tinta);
+  border: 1px solid var(--linea); border-radius: 8px; padding: .7rem .9rem;
+  margin-bottom: .55rem; box-shadow: var(--sombra); text-decoration: none;
+}
+.filial:hover { border-color: var(--dorado); }
+.filial-nombre { display: block; font-weight: 600; font-size: 1rem; }
+.filial-dir { display: block; margin-top: .15rem; }
+.filial-meta { display: block; margin-top: .1rem; font-size: .86rem; color: var(--tinta-suave); font-style: italic; }

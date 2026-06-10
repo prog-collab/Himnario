@@ -1,10 +1,10 @@
 /* Service worker — deja toda la app disponible sin internet.
    Al publicar una versión nueva, cambiar VERSION para que
    los celulares de la congregación se actualicen solos. */
-const VERSION = 'himnario-v3';
+const VERSION = 'himnario-v4';
 const ARCHIVOS = [
   './', 'index.html', 'css/estilos.css', 'js/app.js',
-  'datos/himnos.js', 'datos/temas.js', 'datos/boletines.js',
+  'datos/himnos.js', 'datos/temas.js', 'datos/boletines.js', 'datos/filiales.js',
   'manifest.webmanifest',
   'fuentes/playfair-display-latin-700-normal.woff2',
   'fuentes/playfair-display-latin-900-normal.woff2',
