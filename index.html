@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Himnario · Asamblea Cristiana</title>
+<meta name="description" content="Salmos, Himnos y Cánticos Espirituales — Asamblea Cristiana, Santa Fe, Argentina. 400 himnos con búsqueda.">
+<meta name="theme-color" content="#4a141e">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="iconos/icono-192.png">
+<link rel="apple-touch-icon" href="iconos/apple-touch-icon.png">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<!-- ══════════ CABECERA ══════════ -->
+<header class="cabecera">
+  <div class="cabecera-titulo" id="btn-inicio" role="button" tabindex="0" aria-label="Volver al inicio">
+    <span class="cabecera-monograma">AC</span>
+    <div>
+      <h1>Himnario</h1>
+      <p class="cabecera-sub">Asamblea Cristiana · Santa Fe</p>
+    </div>
+  </div>
+  <div class="cabecera-acciones">
+    <button id="btn-tema" class="btn-icono" aria-label="Cambiar modo claro u oscuro" title="Modo claro / oscuro">◐</button>
+  </div>
+</header>
+
+<!-- ══════════ BÚSQUEDA ══════════ -->
+<div class="buscador" id="buscador">
+  <input id="campo-busqueda" type="search" inputmode="search" autocomplete="off"
+         placeholder="Número, título o parte de la letra…" aria-label="Buscar himno">
+  <nav class="pestanas" aria-label="Secciones">
+    <button class="pestana activa" data-vista="todos">Todos</button>
+    <button class="pestana" data-vista="temas">Temas</button>
+    <button class="pestana" data-vista="favoritos">Favoritos</button>
+    <button class="pestana" data-vista="recientes">Recientes</button>
+    <button class="pestana" data-vista="boletines">Boletines</button>
+  </nav>
+</div>
+
+<!-- ══════════ CONTENIDO ══════════ -->
+<main id="contenido" tabindex="-1"></main>
+
+<!-- ══════════ VISTA HIMNO ══════════ -->
+<article id="vista-himno" class="oculto">
+  <div class="himno-barra">
+    <button id="btn-volver" class="btn-icono" aria-label="Volver a la lista">←</button>
+    <div class="himno-controles">
+      <button id="btn-letra-menos" class="btn-icono" aria-label="Achicar letra">A−</button>
+      <button id="btn-letra-mas" class="btn-icono" aria-label="Agrandar letra">A+</button>
+      <button id="btn-favorito" class="btn-icono" aria-label="Marcar como favorito">☆</button>
+      <button id="btn-presentar" class="btn-icono" aria-label="Modo presentación" title="Pantalla completa para proyectar">⛶</button>
+    </div>
+  </div>
+  <div class="himno-tablero">
+    <span class="himno-numero" id="himno-numero"></span>
+  </div>
+  <h2 class="himno-titulo" id="himno-titulo"></h2>
+  <div class="himno-letra" id="himno-letra"></div>
+  <nav class="himno-navegacion">
+    <button id="btn-anterior" class="btn-nav">← Anterior</button>
+    <button id="btn-siguiente" class="btn-nav">Siguiente →</button>
+  </nav>
+</article>
+
+<!-- ══════════ MODO PRESENTACIÓN ══════════ -->
+<div id="presentacion" class="oculto" role="dialog" aria-label="Modo presentación">
+  <button id="pres-cerrar" aria-label="Salir de presentación">✕</button>
+  <div id="pres-contenido">
+    <div id="pres-encabezado"></div>
+    <div id="pres-texto"></div>
+  </div>
+  <div class="pres-controles">
+    <button id="pres-anterior" aria-label="Estrofa anterior">←</button>
+    <span id="pres-indicador"></span>
+    <button id="pres-siguiente" aria-label="Estrofa siguiente">→</button>
+  </div>
+</div>
+
+<script src="datos/himnos.js"></script>
+<script src="datos/temas.js"></script>
+<script src="datos/boletines.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
