@@ -83,3 +83,4 @@ python3 herramientas/extraer.py
 ```
 
 El script ya incluye las correcciones conocidas del PDF (numeración del 126 y el 235, formatos sin espacio, y el himno 362 pegado al 361).
+
