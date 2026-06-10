@@ -1,0 +1,250 @@
+/* ════════════════════════════════════════════════════════════
+   Himnario Asamblea Cristiana — estilos
+   Paleta inspirada en los himnarios clásicos: tapa bordó,
+   filetes dorados, papel crema.
+   ════════════════════════════════════════════════════════════ */
+
+@font-face { font-family: 'Playfair Display'; font-weight: 700; font-display: swap;
+  src: url('../fuentes/playfair-display-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-weight: 900; font-display: swap;
+  src: url('../fuentes/playfair-display-latin-900-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Crimson Pro'; font-weight: 400; font-display: swap;
+  src: url('../fuentes/crimson-pro-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Crimson Pro'; font-weight: 400; font-style: italic; font-display: swap;
+  src: url('../fuentes/crimson-pro-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Crimson Pro'; font-weight: 600; font-display: swap;
+  src: url('../fuentes/crimson-pro-latin-600-normal.woff2') format('woff2'); }
+
+/* ── Variables de tema ── */
+:root {
+  --bordo: #4a141e;          /* tapa del himnario */
+  --bordo-claro: #6d2433;
+  --dorado: #b8893b;         /* filetes */
+  --dorado-suave: #c79e54;
+  --papel: #f8f3e8;          /* fondo */
+  --papel-tarjeta: #fffdf6;
+  --tinta: #2b241f;          /* texto */
+  --tinta-suave: #6e6258;
+  --linea: #e3d9c6;
+  --coro-fondo: #f3ead7;
+  --sombra: 0 1px 4px rgba(43, 36, 31, .08);
+}
+[data-tema="oscuro"] {
+  --bordo: #2b0d13;
+  --bordo-claro: #4a141e;
+  --dorado: #c79e54;
+  --dorado-suave: #b8893b;
+  --papel: #17120f;
+  --papel-tarjeta: #221b16;
+  --tinta: #ece3d3;
+  --tinta-suave: #a3958a;
+  --linea: #3a2f27;
+  --coro-fondo: #2b2118;
+  --sombra: 0 1px 4px rgba(0, 0, 0, .4);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: var(--papel);
+  color: var(--tinta);
+  font-size: 19px;
+  line-height: 1.5;
+  min-height: 100dvh;
+}
+button { font-family: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--dorado); outline-offset: 2px; }
+
+/* ── Cabecera ── */
+.cabecera {
+  background: var(--bordo);
+  color: #f7f0e2;
+  padding: .7rem 1rem calc(.7rem);
+  padding-top: calc(.7rem + env(safe-area-inset-top));
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 3px double var(--dorado);
+}
+.cabecera-titulo { display: flex; align-items: center; gap: .7rem; cursor: pointer; }
+.cabecera-monograma {
+  font-family: 'Playfair Display', serif; font-weight: 900;
+  border: 1.5px solid var(--dorado); color: var(--dorado-suave);
+  width: 2.4rem; height: 2.4rem; display: grid; place-items: center;
+  font-size: 1rem; letter-spacing: .03em;
+}
+.cabecera h1 { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.25rem; line-height: 1.1; }
+.cabecera-sub { font-size: .78rem; color: var(--dorado-suave); letter-spacing: .04em; }
+.btn-icono {
+  background: none; border: 1px solid transparent; color: inherit;
+  font-size: 1.15rem; padding: .35rem .6rem; border-radius: 4px; line-height: 1;
+}
+.btn-icono:hover { border-color: var(--dorado); }
+
+/* ── Buscador y pestañas ── */
+.buscador {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--papel);
+  padding: .8rem 1rem .4rem;
+  border-bottom: 1px solid var(--linea);
+}
+#campo-busqueda {
+  width: 100%; font-family: inherit; font-size: 1.1rem;
+  padding: .55rem .9rem;
+  border: 1.5px solid var(--linea); border-radius: 6px;
+  background: var(--papel-tarjeta); color: var(--tinta);
+}
+#campo-busqueda:focus { border-color: var(--dorado); outline: none; }
+.pestanas { display: flex; gap: .2rem; margin-top: .5rem; overflow-x: auto; scrollbar-width: none; }
+.pestanas::-webkit-scrollbar { display: none; }
+.pestana {
+  background: none; border: none; color: var(--tinta-suave);
+  font-size: .95rem; padding: .4rem .7rem; white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+.pestana.activa { color: var(--bordo-claro); border-bottom-color: var(--dorado); font-weight: 600; }
+[data-tema="oscuro"] .pestana.activa { color: var(--dorado-suave); }
+
+/* ── Listas de resultados ── */
+main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
+.resultado {
+  display: flex; align-items: baseline; gap: .8rem;
+  width: 100%; text-align: left;
+  background: var(--papel-tarjeta); color: var(--tinta);
+  border: 1px solid var(--linea); border-radius: 8px;
+  padding: .65rem .9rem; margin-bottom: .5rem;
+  box-shadow: var(--sombra);
+}
+.resultado:active { transform: scale(.995); }
+.resultado-numero {
+  font-family: 'Playfair Display', serif; font-weight: 900;
+  color: var(--bordo-claro); min-width: 2.6rem; font-size: 1.15rem;
+}
+[data-tema="oscuro"] .resultado-numero { color: var(--dorado-suave); }
+.resultado-textos { flex: 1; min-width: 0; }
+.resultado-titulo { font-weight: 600; font-size: 1.02rem; }
+.resultado-primera { color: var(--tinta-suave); font-style: italic; font-size: .92rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.resultado-coincidencia { color: var(--tinta-suave); font-size: .88rem; margin-top: .15rem; }
+.resultado-coincidencia mark { background: var(--coro-fondo); color: inherit; font-weight: 600; }
+.resultado-fav { color: var(--dorado); font-size: .95rem; }
+
+.titulo-seccion {
+  font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05rem;
+  color: var(--bordo-claro); margin: 1.2rem 0 .6rem;
+  display: flex; align-items: center; gap: .6rem;
+}
+[data-tema="oscuro"] .titulo-seccion { color: var(--dorado-suave); }
+.titulo-seccion::after { content: ""; flex: 1; border-top: 1px solid var(--linea); }
+.mensaje-vacio { text-align: center; color: var(--tinta-suave); font-style: italic; padding: 2.5rem 1rem; }
+
+/* Acordeón de temas */
+.tema {
+  width: 100%; text-align: left; background: none; color: var(--tinta);
+  border: none; border-bottom: 1px solid var(--linea);
+  padding: .75rem .2rem; font-size: 1.02rem;
+  display: flex; justify-content: space-between; align-items: center; gap: .5rem;
+}
+.tema-cantidad { color: var(--tinta-suave); font-size: .85rem; }
+
+/* ── Vista de himno ── */
+#vista-himno { max-width: 680px; margin: 0 auto; padding: .6rem 1.1rem 3rem; }
+.oculto { display: none !important; }
+.himno-barra { display: flex; justify-content: space-between; align-items: center; padding: .3rem 0 .6rem; }
+.himno-barra .btn-icono { color: var(--tinta); border-color: var(--linea); }
+.himno-controles { display: flex; gap: .3rem; }
+#btn-favorito.activo { color: var(--dorado); }
+
+/* El tablero: número grande como en el tablero de himnos del templo */
+.himno-tablero {
+  margin: .4rem auto .8rem; width: fit-content;
+  background: var(--bordo); border: 2px solid var(--dorado);
+  border-radius: 6px; padding: .35rem 1.6rem .5rem;
+  box-shadow: var(--sombra);
+}
+.himno-numero {
+  font-family: 'Playfair Display', serif; font-weight: 900;
+  font-size: 2.6rem; color: #f7f0e2; letter-spacing: .02em;
+}
+.himno-titulo {
+  font-family: 'Playfair Display', serif; font-weight: 700;
+  text-align: center; font-size: 1.45rem; line-height: 1.25;
+  margin-bottom: 1.4rem; text-wrap: balance;
+}
+.himno-letra { font-size: var(--tam-letra, 1.18rem); line-height: 1.65; }
+.estrofa { margin-bottom: 1.15em; white-space: pre-line; }
+.estrofa-coro {
+  background: var(--coro-fondo);
+  border-left: 3px solid var(--dorado);
+  padding: .7em .95em; border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+.estrofa-coro .coro-etiqueta { font-style: normal; font-weight: 600; color: var(--bordo-claro);
+  letter-spacing: .06em; font-size: .85em; display: block; margin-bottom: .25em; }
+[data-tema="oscuro"] .estrofa-coro .coro-etiqueta { color: var(--dorado-suave); }
+.estrofa-numero { font-weight: 600; color: var(--bordo-claro); }
+[data-tema="oscuro"] .estrofa-numero { color: var(--dorado-suave); }
+
+.himno-navegacion { display: flex; justify-content: space-between; margin-top: 2rem; gap: 1rem; }
+.btn-nav {
+  background: var(--papel-tarjeta); color: var(--tinta);
+  border: 1px solid var(--linea); border-radius: 8px;
+  padding: .55rem 1rem; font-size: .98rem; flex: 1;
+}
+
+/* ── Boletines ── */
+.boletin {
+  display: block; width: 100%; text-align: left;
+  background: var(--papel-tarjeta); color: var(--tinta);
+  border: 1px solid var(--linea); border-radius: 8px;
+  padding: .8rem 1rem; margin-bottom: .6rem; box-shadow: var(--sombra);
+  text-decoration: none;
+}
+.boletin-titulo { font-weight: 600; font-size: 1.05rem; }
+.boletin-fecha { color: var(--tinta-suave); font-size: .88rem; font-style: italic; }
+.boletin-descripcion { font-size: .95rem; margin-top: .25rem; color: var(--tinta-suave); }
+
+/* ── Modo presentación ── */
+#presentacion {
+  position: fixed; inset: 0; z-index: 100;
+  background: #14100d; color: #f7f0e2;
+  display: flex; flex-direction: column;
+}
+#pres-cerrar {
+  position: absolute; top: max(1rem, env(safe-area-inset-top)); right: 1.2rem;
+  background: none; border: 1px solid #4a3f35; color: #f7f0e2;
+  font-size: 1.3rem; padding: .4rem .8rem; border-radius: 6px;
+}
+#pres-contenido {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center; padding: 3.5rem 2rem 1.5rem;
+}
+#pres-encabezado {
+  font-family: 'Playfair Display', serif; font-weight: 700;
+  color: var(--dorado-suave); font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+  margin-bottom: 1.2em;
+}
+#pres-texto {
+  font-size: clamp(1.7rem, 4.6vw, 3.4rem);
+  line-height: 1.45; white-space: pre-line; max-width: 22ch;
+  text-wrap: balance;
+}
+#pres-texto .coro-etiqueta { display: block; color: var(--dorado-suave);
+  font-size: .55em; letter-spacing: .1em; font-weight: 600; margin-bottom: .4em; }
+.pres-controles {
+  display: flex; align-items: center; justify-content: center; gap: 1.5rem;
+  padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom));
+}
+.pres-controles button {
+  background: none; border: 1px solid #4a3f35; color: #f7f0e2;
+  font-size: 1.4rem; padding: .5rem 1.6rem; border-radius: 8px;
+}
+#pres-indicador { color: #8a7d70; font-size: 1rem; min-width: 4.5rem; text-align: center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .resultado, .btn-nav { transition: transform .08s ease, border-color .15s ease; }
+}
+@media (min-width: 700px) {
+  body { font-size: 20px; }
+  .himno-titulo { font-size: 1.7rem; }
+}
