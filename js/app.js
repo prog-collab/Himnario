@@ -260,7 +260,7 @@ function renderVista() {
      recientes: mostrarRecientes, boletines: mostrarBoletines,
      configuracion: mostrarConfiguracion, noticias: mostrarNoticias,
      calendario: mostrarCalendario, biblia: mostrarBiblia,
-     multimedia: mostrarMultimedia, libros: mostrarLibros, recursos: mostrarRecursos,
+     multimedia: mostrarMultimedia, libros: mostrarLibros, ministerios: mostrarMinisterios, recursos: mostrarRecursos,
      donaciones: mostrarDonaciones }[vistaActual])();
 }
 document.querySelectorAll('.pestana').forEach(p => {
@@ -295,7 +295,7 @@ function actualizarMenu(seccion) {
   document.querySelectorAll('.menu-enlace').forEach(b =>
     b.classList.toggle('activo', b.dataset.seccion === seccion));
 }
-const SECCIONES_MENU = ['himnario', 'noticias', 'calendario', 'biblia', 'multimedia', 'libros', 'recursos', 'donaciones', 'boletines', 'filiales', 'configuracion'];
+const SECCIONES_MENU = ['himnario', 'noticias', 'ministerios', 'calendario', 'biblia', 'multimedia', 'libros', 'recursos', 'donaciones', 'boletines', 'filiales', 'configuracion'];
 function seccionActualMenu() {
   if (!vistaFiliales.classList.contains('oculto')) return 'filiales';
   if (himnoAbierto || ['todos', 'temas', 'favoritos', 'recientes'].includes(vistaActual)) return 'himnario';
@@ -679,6 +679,17 @@ function mostrarLibros() {
           <span class="boletin-fecha">${libro.autor}</span>
         </a>`).join('')}</div>`
       : `<p class="mensaje-vacio">No hay libros disponibles por el momento.</p>`) + '</section>';
+}
+
+function mostrarMinisterios() {
+  const ministerios = typeof MINISTERIOS === 'undefined' ? [] : MINISTERIOS;
+  contenido.innerHTML = encabezadoSeccion('Ministerios', 'Espacios de servicio y crecimiento de la Asamblea Cristiana.') +
+    `<p class="ministerios-ayuda">Al iniciar sesión, cada hermano verá el contenido y las herramientas del ministerio que tenga asignado.</p>
+    <div class="tarjetas-seccion">${ministerios.map(ministerio => tarjetaInformativa(
+      ministerio.nombre,
+      'El acceso para sus integrantes se habilitará al configurar las cuentas de usuario.',
+      'Ministerio'
+    )).join('')}</div></section>`;
 }
 
 function mostrarRecursos() {
