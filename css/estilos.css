@@ -308,6 +308,15 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
   align-items: center; justify-content: center; gap: .27rem; padding: .35rem; }
 .btn-menu span { display: block; width: 1.3rem; height: 2px; border-radius: 2px; background: #f7f0e2; }
 .btn-menu:hover span { background: var(--dorado-suave); }
+.aviso-instalacion { position: fixed; inset: 0; z-index: 90; display: grid; place-items: end center; padding: 1rem; background: rgba(20, 12, 9, .46); }
+.aviso-instalacion-caja { width: min(32rem, 100%); padding: 1.15rem; border: 1px solid var(--linea); border-radius: 10px; background: var(--papel-tarjeta); box-shadow: 0 6px 28px rgba(0, 0, 0, .3); }
+.aviso-instalacion h2 { font-family: 'Playfair Display', serif; color: var(--bordo-claro); font-size: 1.25rem; }
+[data-tema="oscuro"] .aviso-instalacion h2 { color: var(--dorado-suave); }
+.aviso-instalacion p { color: var(--tinta-suave); margin: .25rem 0 .9rem; }
+.aviso-instalacion-acciones { display: flex; justify-content: flex-end; gap: .55rem; }
+.btn-primario, .btn-secundario { border-radius: 6px; padding: .5rem .8rem; font: inherit; }
+.btn-primario { border: 1px solid var(--bordo); background: var(--bordo); color: #f7f0e2; }
+.btn-secundario { border: 1px solid var(--linea); background: transparent; color: var(--tinta); }
 .menu-fondo { position: fixed; inset: 0; z-index: 49; background: rgba(20, 12, 9, .52); }
 .menu-principal {
   position: fixed; z-index: 50; top: 0; right: 0; width: min(19rem, 86vw); height: 100dvh;

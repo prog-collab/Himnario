@@ -321,6 +321,35 @@ menuFondo.addEventListener('click', cerrarMenu);
 document.querySelectorAll('.menu-enlace').forEach(b =>
   b.addEventListener('click', () => navegarSeccion(b.dataset.seccion)));
 
+/* ── Instalación como aplicación ── */
+const avisoInstalacion = $('#aviso-instalacion');
+let eventoInstalacion = null;
+const yaInstalada = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+function mostrarAvisoInstalacion() {
+  if (!yaInstalada()) avisoInstalacion.classList.remove('oculto');
+}
+window.addEventListener('beforeinstallprompt', ev => {
+  ev.preventDefault();
+  eventoInstalacion = ev;
+  mostrarAvisoInstalacion();
+});
+window.addEventListener('appinstalled', () => {
+  eventoInstalacion = null;
+  avisoInstalacion.classList.add('oculto');
+});
+$('#btn-cerrar-instalacion').addEventListener('click', () => avisoInstalacion.classList.add('oculto'));
+$('#btn-instalar-app').addEventListener('click', async () => {
+  if (eventoInstalacion) {
+    await eventoInstalacion.prompt();
+    eventoInstalacion = null;
+    avisoInstalacion.classList.add('oculto');
+    return;
+  }
+  $('#instalacion-texto').textContent = 'En iPhone o iPad, tocá Compartir y elegí “Agregar a pantalla de inicio”.';
+  $('#btn-instalar-app').classList.add('oculto');
+});
+if (!yaInstalada()) setTimeout(mostrarAvisoInstalacion, 350);
+
 let gestoInicio = null;
 document.addEventListener('touchstart', ev => {
   if (ev.touches.length !== 1 || menu.classList.contains('abierto') || himnoAbierto) return;
