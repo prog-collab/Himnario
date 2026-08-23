@@ -295,6 +295,12 @@ function actualizarMenu(seccion) {
   document.querySelectorAll('.menu-enlace').forEach(b =>
     b.classList.toggle('activo', b.dataset.seccion === seccion));
 }
+const SECCIONES_MENU = ['himnario', 'noticias', 'calendario', 'biblia', 'multimedia', 'libros', 'recursos', 'donaciones', 'boletines', 'filiales', 'configuracion'];
+function seccionActualMenu() {
+  if (!vistaFiliales.classList.contains('oculto')) return 'filiales';
+  if (himnoAbierto || ['todos', 'temas', 'favoritos', 'recientes'].includes(vistaActual)) return 'himnario';
+  return vistaActual;
+}
 function navegarSeccion(seccion) {
   cerrarMenu();
   cerrarPresentacion();
@@ -314,6 +320,25 @@ $('#btn-cerrar-menu').addEventListener('click', cerrarMenu);
 menuFondo.addEventListener('click', cerrarMenu);
 document.querySelectorAll('.menu-enlace').forEach(b =>
   b.addEventListener('click', () => navegarSeccion(b.dataset.seccion)));
+
+let gestoInicio = null;
+document.addEventListener('touchstart', ev => {
+  if (ev.touches.length !== 1 || menu.classList.contains('abierto') || himnoAbierto) return;
+  if (ev.target.closest('input, select, textarea, button, a')) return;
+  const toque = ev.touches[0];
+  gestoInicio = { x: toque.clientX, y: toque.clientY };
+}, { passive: true });
+document.addEventListener('touchend', ev => {
+  if (!gestoInicio || ev.changedTouches.length !== 1) { gestoInicio = null; return; }
+  const toque = ev.changedTouches[0];
+  const dx = toque.clientX - gestoInicio.x;
+  const dy = toque.clientY - gestoInicio.y;
+  gestoInicio = null;
+  if (Math.abs(dx) < 72 || Math.abs(dx) <= Math.abs(dy) * 1.4) return;
+  const indice = SECCIONES_MENU.indexOf(seccionActualMenu());
+  const siguiente = indice + (dx < 0 ? 1 : -1);
+  if (siguiente >= 0 && siguiente < SECCIONES_MENU.length) navegarSeccion(SECCIONES_MENU[siguiente]);
+}, { passive: true });
 
 /* ════════════ VISTA DE HIMNO ════════════ */
 const vistaHimno = $('#vista-himno');
