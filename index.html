@@ -23,22 +23,31 @@
     </div>
   </div>
   <div class="cabecera-acciones">
-    <button id="btn-tema" class="btn-icono" aria-label="Cambiar modo claro u oscuro" title="Modo claro / oscuro">◐</button>
-    <button id="btn-filiales" class="btn-icono" aria-label="Filiales y direcciones" title="Filiales · direcciones">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 2.2v3.6M10.3 4h3.4"/>
-        <path d="M12 6 5 11v10.5h14V11z"/>
-        <path d="M9.3 21.5v-4.2a2.7 2.7 0 0 1 5.4 0v4.2"/>
-      </svg>
+    <button id="btn-menu" class="btn-icono btn-menu" aria-label="Abrir menú" aria-expanded="false" aria-controls="menu-principal">
+      <span></span><span></span><span></span>
     </button>
   </div>
 </header>
+
+<div id="menu-fondo" class="menu-fondo oculto"></div>
+<aside id="menu-principal" class="menu-principal" aria-label="Menú principal" aria-hidden="true">
+  <div class="menu-cabecera">
+    <span>Menú</span>
+    <button id="btn-cerrar-menu" class="btn-icono" aria-label="Cerrar menú">×</button>
+  </div>
+  <nav class="menu-navegacion">
+    <button class="menu-enlace activo" data-seccion="himnario">Himnario</button>
+    <button class="menu-enlace" data-seccion="boletines">Boletines</button>
+    <button class="menu-enlace" data-seccion="filiales">Filiales</button>
+    <button class="menu-enlace" data-seccion="configuracion">Configuración</button>
+  </nav>
+</aside>
 
 <!-- ══════════ BÚSQUEDA ══════════ -->
 <div class="buscador" id="buscador">
   <input id="campo-busqueda" type="search" inputmode="search" autocomplete="off"
          placeholder="Número, título o parte de la letra…" aria-label="Buscar himno">
-  <nav class="pestanas" aria-label="Secciones">
+  <nav id="subnavegacion" class="pestanas" aria-label="Explorar himnario">
     <button class="pestana activa" data-vista="todos">Todos</button>
     <button class="pestana" data-vista="temas">Temas</button>
     <button class="pestana" data-vista="favoritos">Favoritos</button>
@@ -55,8 +64,6 @@
   <div class="himno-barra">
     <button id="btn-volver" class="btn-icono" aria-label="Volver a la lista">←</button>
     <div class="himno-controles">
-      <button id="btn-letra-menos" class="btn-icono" aria-label="Achicar letra">A−</button>
-      <button id="btn-letra-mas" class="btn-icono" aria-label="Agrandar letra">A+</button>
       <button id="btn-favorito" class="btn-icono" aria-label="Marcar como favorito">☆</button>
       <button id="btn-presentar" class="btn-icono" aria-label="Modo presentación" title="Pantalla completa para proyectar">⛶</button>
     </div>

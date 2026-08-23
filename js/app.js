@@ -43,11 +43,6 @@ function aplicarTema() {
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) meta.content = temaActual === 'oscuro' ? '#2b0d13' : '#4a141e';
 }
-$('#btn-tema').addEventListener('click', () => {
-  temaActual = temaActual === 'oscuro' ? 'claro' : 'oscuro';
-  guardar('tema', temaActual);
-  aplicarTema();
-});
 
 /* ── Estado de navegación ── */
 let vistaActual = 'todos';   // pestaña activa
@@ -256,23 +251,66 @@ campo.addEventListener('input', () => {
   temporizador = setTimeout(() => buscar(campo.value), 120);
 });
 
-/* ════════════ PESTAÑAS ════════════ */
+/* ════════════ NAVEGACIÓN ════════════ */
 function renderVista() {
-  // El buscador de himnos no aplica en la sección Boletines (tiene el suyo propio)
-  $('#campo-busqueda').classList.toggle('oculto', vistaActual === 'boletines');
+  const esHimnario = ['todos', 'temas', 'favoritos', 'recientes'].includes(vistaActual);
+  $('#buscador').classList.toggle('oculto', !esHimnario);
+  $('#subnavegacion').classList.toggle('oculto', !esHimnario);
   ({ todos: mostrarTodos, temas: mostrarTemas, favoritos: mostrarFavoritos,
-     recientes: mostrarRecientes, boletines: mostrarBoletines }[vistaActual])();
+     recientes: mostrarRecientes, boletines: mostrarBoletines,
+     configuracion: mostrarConfiguracion }[vistaActual])();
 }
 document.querySelectorAll('.pestana').forEach(p => {
   p.addEventListener('click', () => {
     document.querySelectorAll('.pestana').forEach(x => x.classList.remove('activa'));
     p.classList.add('activa');
     vistaActual = p.dataset.vista;
+    actualizarMenu('himnario');
     campo.value = '';
     cerrarHimno(false);
     renderVista();
   });
 });
+
+const menu = $('#menu-principal');
+const menuFondo = $('#menu-fondo');
+
+function abrirMenu() {
+  menu.classList.add('abierto');
+  menuFondo.classList.remove('oculto');
+  menu.setAttribute('aria-hidden', 'false');
+  $('#btn-menu').setAttribute('aria-expanded', 'true');
+  $('#btn-cerrar-menu').focus();
+}
+function cerrarMenu() {
+  menu.classList.remove('abierto');
+  menuFondo.classList.add('oculto');
+  menu.setAttribute('aria-hidden', 'true');
+  $('#btn-menu').setAttribute('aria-expanded', 'false');
+}
+function actualizarMenu(seccion) {
+  document.querySelectorAll('.menu-enlace').forEach(b =>
+    b.classList.toggle('activo', b.dataset.seccion === seccion));
+}
+function navegarSeccion(seccion) {
+  cerrarMenu();
+  cerrarPresentacion();
+  if (seccion === 'filiales') { abrirFiliales(); return; }
+  himnoAbierto = null;
+  vistaHimno.classList.add('oculto');
+  vistaFiliales.classList.add('oculto');
+  contenido.classList.remove('oculto');
+  vistaActual = seccion === 'himnario' ? 'todos' : seccion;
+  campo.value = '';
+  actualizarMenu(seccion);
+  renderVista();
+  window.scrollTo(0, 0);
+}
+$('#btn-menu').addEventListener('click', abrirMenu);
+$('#btn-cerrar-menu').addEventListener('click', cerrarMenu);
+menuFondo.addEventListener('click', cerrarMenu);
+document.querySelectorAll('.menu-enlace').forEach(b =>
+  b.addEventListener('click', () => navegarSeccion(b.dataset.seccion)));
 
 /* ════════════ VISTA DE HIMNO ════════════ */
 const vistaHimno = $('#vista-himno');
@@ -339,6 +377,18 @@ function cerrarHimno(volverScroll = true) {
 
 // Delegación de clics en las listas
 contenido.addEventListener('click', ev => {
+  const ajuste = ev.target.closest('[data-config-accion]');
+  if (ajuste) {
+    if (ajuste.dataset.configAccion === 'tema') {
+      temaActual = temaActual === 'oscuro' ? 'claro' : 'oscuro';
+      guardar('tema', temaActual);
+      aplicarTema();
+    } else {
+      cambiarLetra(ajuste.dataset.configAccion === 'letra-mas' ? 0.12 : -0.12);
+    }
+    mostrarConfiguracion();
+    return;
+  }
   const tarjeta = ev.target.closest('.resultado');
   if (tarjeta) { abrirHimno(parseInt(tarjeta.dataset.n, 10)); return; }
   const tema = ev.target.closest('.tema');
@@ -356,7 +406,7 @@ contenido.addEventListener('click', ev => {
 });
 
 $('#btn-volver').addEventListener('click', () => history.length > 1 ? history.back() : cerrarHimno());
-$('#btn-inicio').addEventListener('click', () => { cerrarHimno(); campo.value = ''; renderVista(); });
+$('#btn-inicio').addEventListener('click', () => navegarSeccion('himnario'));
 $('#btn-anterior').addEventListener('click', () => himnoAbierto && abrirHimno(himnoAbierto.n - 1));
 $('#btn-siguiente').addEventListener('click', () => himnoAbierto && abrirHimno(himnoAbierto.n + 1));
 
@@ -365,7 +415,7 @@ window.addEventListener('popstate', ev => {
   const st = ev.state || {};
   if (st.himno) { cerrarFiliales(); abrirHimno(st.himno, false); }
   else if (st.filiales) { abrirFiliales(false); }
-  else { cerrarHimno(); cerrarFiliales(); }
+  else { cerrarHimno(); cerrarFiliales(); actualizarMenu('himnario'); }
 });
 
 /* ── Tamaño de letra ── */
@@ -374,8 +424,27 @@ function cambiarLetra(delta) {
   guardar('tamLetra', tamLetra);
   $('#himno-letra').style.setProperty('--tam-letra', tamLetra + 'rem');
 }
-$('#btn-letra-mas').addEventListener('click', () => cambiarLetra(0.12));
-$('#btn-letra-menos').addEventListener('click', () => cambiarLetra(-0.12));
+
+function mostrarConfiguracion() {
+  const porcentaje = Math.round((tamLetra / 1.18) * 100);
+  const oscuro = temaActual === 'oscuro';
+  contenido.innerHTML = `<section class="configuracion" aria-labelledby="configuracion-titulo">
+    <h2 id="configuracion-titulo">Configuración</h2>
+    <p class="configuracion-intro">Elegí cómo querés leer el himnario.</p>
+    <div class="ajuste">
+      <div><h3>Tamaño de letra</h3><p>Lectura de los himnos: ${porcentaje}%</p></div>
+      <div class="ajuste-controles" aria-label="Cambiar tamaño de letra">
+        <button class="ajuste-boton" data-config-accion="letra-menos" aria-label="Reducir tamaño de letra">A−</button>
+        <span class="ajuste-muestra" style="font-size:${tamLetra}rem">Aa</span>
+        <button class="ajuste-boton" data-config-accion="letra-mas" aria-label="Aumentar tamaño de letra">A+</button>
+      </div>
+    </div>
+    <div class="ajuste">
+      <div><h3>Modo de visualización</h3><p>${oscuro ? 'Modo oscuro activado' : 'Modo claro activado'}</p></div>
+      <button class="interruptor ${oscuro ? 'activo' : ''}" data-config-accion="tema" role="switch" aria-checked="${oscuro}" aria-label="Cambiar modo claro u oscuro"><span></span></button>
+    </div>
+  </section>`;
+}
 
 /* ── Favoritos ── */
 function actualizarBotonFavorito() {
@@ -481,6 +550,8 @@ function renderFiliales() {
 function abrirFiliales(registrar = true) {
   initFiliales();
   cerrarPresentacion();
+  cerrarMenu();
+  actualizarMenu('filiales');
   himnoAbierto = null;
   vistaHimno.classList.add('oculto');
   $('#buscador').classList.add('oculto');
@@ -495,8 +566,8 @@ function cerrarFiliales() {
   $('#buscador').classList.remove('oculto');
   contenido.classList.remove('oculto');
 }
-$('#btn-filiales').addEventListener('click', () => abrirFiliales());
 $('#btn-filiales-volver').addEventListener('click', () => history.length > 1 ? history.back() : cerrarFiliales());
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && menu.classList.contains('abierto')) cerrarMenu(); });
 
 /* ════════════ ARRANQUE ════════════ */
 // Si la URL trae #N, abrir ese himno directamente

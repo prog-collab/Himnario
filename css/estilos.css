@@ -302,3 +302,49 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
 .filial-nombre { display: block; font-weight: 600; font-size: 1rem; }
 .filial-dir { display: block; margin-top: .15rem; }
 .filial-meta { display: block; margin-top: .1rem; font-size: .86rem; color: var(--tinta-suave); font-style: italic; }
+
+/* ── Menú principal ── */
+.btn-menu { width: 2.65rem; height: 2.4rem; display: inline-flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .27rem; padding: .35rem; }
+.btn-menu span { display: block; width: 1.3rem; height: 2px; border-radius: 2px; background: #f7f0e2; }
+.btn-menu:hover span { background: var(--dorado-suave); }
+.menu-fondo { position: fixed; inset: 0; z-index: 49; background: rgba(20, 12, 9, .52); }
+.menu-principal {
+  position: fixed; z-index: 50; top: 0; right: 0; width: min(19rem, 86vw); height: 100dvh;
+  background: var(--papel); color: var(--tinta); border-left: 1px solid var(--linea);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, .22); transform: translateX(105%);
+  transition: transform .2s ease; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.menu-principal.abierto { transform: translateX(0); }
+.menu-cabecera { display: flex; align-items: center; justify-content: space-between; padding: .65rem 1rem;
+  background: var(--bordo); color: #f7f0e2; border-bottom: 2px solid var(--dorado); font-family: 'Playfair Display', serif; font-weight: 700; }
+.menu-cabecera .btn-icono { color: inherit; font-size: 1.65rem; padding: .1rem .45rem; }
+.menu-navegacion { padding: .65rem; }
+.menu-enlace { display: block; width: 100%; border: 0; border-radius: 6px; background: transparent; color: var(--tinta);
+  text-align: left; padding: .8rem .9rem; font-size: 1.08rem; }
+.menu-enlace:hover, .menu-enlace.activo { background: var(--coro-fondo); color: var(--bordo-claro); font-weight: 600; }
+[data-tema="oscuro"] .menu-enlace:hover, [data-tema="oscuro"] .menu-enlace.activo { color: var(--dorado-suave); }
+
+/* ── Configuración ── */
+.configuracion { max-width: 620px; margin: .4rem auto; }
+.configuracion h2 { font-family: 'Playfair Display', serif; color: var(--bordo-claro); font-size: 1.55rem; }
+[data-tema="oscuro"] .configuracion h2 { color: var(--dorado-suave); }
+.configuracion-intro { color: var(--tinta-suave); margin: .15rem 0 1.2rem; }
+.ajuste { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem;
+  margin-bottom: .75rem; background: var(--papel-tarjeta); border: 1px solid var(--linea); border-radius: 8px; box-shadow: var(--sombra); }
+.ajuste h3 { font-size: 1.08rem; font-weight: 600; }
+.ajuste p { color: var(--tinta-suave); font-size: .92rem; }
+.ajuste-controles { display: flex; align-items: center; gap: .35rem; }
+.ajuste-boton { min-width: 2.5rem; height: 2.35rem; border: 1px solid var(--linea); border-radius: 5px;
+  background: var(--papel); color: var(--tinta); font-size: 1rem; }
+.ajuste-boton:hover { border-color: var(--dorado); color: var(--bordo-claro); }
+.ajuste-muestra { width: 2.6rem; text-align: center; font-weight: 600; }
+.interruptor { width: 3.1rem; height: 1.75rem; border: 0; border-radius: 2rem; padding: .2rem;
+  background: #8b8178; transition: background .15s ease; }
+.interruptor span { display: block; width: 1.35rem; height: 1.35rem; border-radius: 50%; background: #fff; transition: transform .15s ease; }
+.interruptor.activo { background: var(--bordo-claro); }
+.interruptor.activo span { transform: translateX(1.35rem); }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-principal, .interruptor, .interruptor span { transition: none; }
+}
