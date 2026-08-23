@@ -380,6 +380,15 @@ function cerrarHimno(volverScroll = true) {
 
 // Delegación de clics en las listas
 contenido.addEventListener('click', ev => {
+  const pasaje = ev.target.closest('[data-biblia-libro]');
+  if (pasaje) {
+    bibliaLibro = pasaje.dataset.bibliaLibro;
+    bibliaCapitulo = pasaje.dataset.bibliaCapitulo;
+    busquedaBiblia = '';
+    mostrarBiblia();
+    window.scrollTo(0, 0);
+    return;
+  }
   const calendario = ev.target.closest('[data-calendario]');
   if (calendario) {
     fechaCalendario.setMonth(fechaCalendario.getMonth() + Number(calendario.dataset.calendario));
@@ -470,6 +479,42 @@ function tarjetaInformativa(titulo, texto, etiqueta = 'Próximamente') {
   </article>`;
 }
 
+const ORDEN_BIBLICO = [
+  'Génesis', 'Éxodo', 'Levítico', 'Números', 'Deuteronomio', 'Josué', 'Jueces', 'Rut',
+  '1 Samuel', '2 Samuel', '1 Reyes', '2 Reyes', '1 Crónicas', '2 Crónicas', 'Esdras', 'Nehemías',
+  'Ester', 'Job', 'Salmos', 'Proverbios', 'Eclesiastés', 'Cantares', 'Isaías', 'Jeremías',
+  'Lamentaciones', 'Ezequiel', 'Daniel', 'Oseas', 'Joel', 'Amós', 'Abdías', 'Jonás', 'Miqueas',
+  'Nahúm', 'Habacuc', 'Sofonías', 'Hageo', 'Zacarías', 'Malaquías', 'S. Mateo', 'S. Marcos',
+  'S. Lucas', 'S.Juan', 'Hechos', 'Romanos', '1 Corintios', '2 Corintios', 'Gálatas', 'Efesios',
+  'Filipenses', 'Colosenses', '1 Tesalonicenses', '2 Tesalonicenses', '1 Timoteo', '2 Timoteo',
+  'Tito', 'Filemón', 'Hebreos', 'Santiago', '1 Pedro', '2 Pedro', '1 Juan', '2 Juan', '3 Juan',
+  'Judas', 'Apocalipsis'
+];
+let bibliaDatos = null;
+let bibliaCargando = null;
+let bibliaLibro = 'Génesis';
+let bibliaCapitulo = '1';
+let busquedaBiblia = '';
+
+function escaparHTML(texto) {
+  return String(texto).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[c]);
+}
+
+async function cargarBiblia() {
+  if (bibliaDatos) return bibliaDatos;
+  if (!bibliaCargando) {
+    bibliaCargando = fetch('datos/rvr1960.json')
+      .then(resp => { if (!resp.ok) throw new Error('No se pudo descargar la Biblia'); return resp.json(); })
+      .then(datos => {
+        if (!datos.Génesis || !datos.Apocalipsis) throw new Error('El archivo bíblico no tiene el formato esperado');
+        bibliaDatos = datos;
+        return datos;
+      });
+  }
+  try { return await bibliaCargando; }
+  finally { bibliaCargando = null; }
+}
+
 function mostrarNoticias() {
   contenido.innerHTML = encabezadoSeccion('Noticias', 'Novedades y acompañamiento de la Asamblea Cristiana.') +
     `<div class="tarjetas-seccion">
@@ -515,11 +560,84 @@ function mostrarCalendario() {
 }
 
 function mostrarBiblia() {
-  contenido.innerHTML = encabezadoSeccion('Biblia', 'Lecturas y recursos para meditar en la Palabra de Dios.') +
-    `<div class="tarjetas-seccion">${tarjetaInformativa('Lectura bíblica', 'Aquí se podrán consultar las lecturas bíblicas diarias y acceder a los pasajes recomendados.')}
-      ${tarjetaInformativa('Plan de lectura', 'Un plan de lectura congregacional para acompañar durante el año.')}
-    </div></section>`;
+  if (!bibliaDatos) {
+    contenido.innerHTML = encabezadoSeccion('Biblia', 'Reina-Valera 1960.') +
+      `<p class="mensaje-vacio">Cargando la Biblia…</p></section>`;
+    cargarBiblia().then(() => { if (vistaActual === 'biblia') mostrarBiblia(); })
+      .catch(() => { if (vistaActual === 'biblia') contenido.innerHTML = encabezadoSeccion('Biblia', 'Reina-Valera 1960.') + `<p class="mensaje-vacio">No se pudo cargar la Biblia. Comprobá tu conexión e intentá nuevamente.</p></section>`; });
+    return;
+  }
+  const capitulos = bibliaDatos[bibliaLibro];
+  const versiculos = capitulos[bibliaCapitulo];
+  const libros = ORDEN_BIBLICO.filter(libro => bibliaDatos[libro]);
+  contenido.innerHTML = encabezadoSeccion('Biblia', 'Reina-Valera 1960.') +
+    `<div class="biblia-controles">
+      <label>Libro<select id="biblia-libro">${libros.map(libro => `<option value="${escaparHTML(libro)}" ${libro === bibliaLibro ? 'selected' : ''}>${escaparHTML(libro)}</option>`).join('')}</select></label>
+      <label>Capítulo<select id="biblia-capitulo">${Object.keys(capitulos).map(cap => `<option value="${cap}" ${cap === bibliaCapitulo ? 'selected' : ''}>${cap}</option>`).join('')}</select></label>
+    </div>
+    <input id="buscar-biblia" class="buscar-biblia" type="search" inputmode="search" autocomplete="off" value="${escaparHTML(busquedaBiblia)}" placeholder="Buscar una palabra o frase…" aria-label="Buscar en la Biblia">
+    <div id="lectura-biblica" class="lectura-biblica">${htmlLecturaBiblica(versiculos)}</div></section>`;
 }
+
+function htmlLecturaBiblica(versiculos) {
+  return `<h3>${escaparHTML(bibliaLibro)} ${bibliaCapitulo}</h3>` +
+    Object.entries(versiculos).map(([numero, texto]) => `<p><sup>${numero}</sup>${escaparHTML(texto)}</p>`).join('');
+}
+
+function buscarEnBiblia(consulta) {
+  const lector = $('#lectura-biblica');
+  if (!lector || !bibliaDatos) return;
+  const q = consulta.trim();
+  if (q.length < 3) {
+    lector.innerHTML = htmlLecturaBiblica(bibliaDatos[bibliaLibro][bibliaCapitulo]);
+    return;
+  }
+  const normalizada = normalizar(q);
+  const resultados = [];
+  for (const libro of ORDEN_BIBLICO) {
+    const capitulos = bibliaDatos[libro];
+    if (!capitulos) continue;
+    for (const [capitulo, versos] of Object.entries(capitulos)) {
+      for (const [versiculo, texto] of Object.entries(versos)) {
+        if (normalizar(texto).includes(normalizada)) {
+          resultados.push({ libro, capitulo, versiculo, texto });
+          if (resultados.length === 60) break;
+        }
+      }
+      if (resultados.length === 60) break;
+    }
+    if (resultados.length === 60) break;
+  }
+  if (!resultados.length) {
+    lector.innerHTML = `<p class="mensaje-vacio">No se encontraron versículos para «${escaparHTML(q)}».</p>`;
+    return;
+  }
+  lector.innerHTML = `<p class="biblia-resultados-resumen">${resultados.length === 60 ? 'Primeros 60 resultados' : resultados.length + ' resultado' + (resultados.length !== 1 ? 's' : '')} para «${escaparHTML(q)}».</p>` +
+    resultados.map(r => `<button class="resultado-biblia" data-biblia-libro="${escaparHTML(r.libro)}" data-biblia-capitulo="${r.capitulo}">
+      <strong>${escaparHTML(r.libro)} ${r.capitulo}:${r.versiculo}</strong><span>${escaparHTML(r.texto)}</span>
+    </button>`).join('');
+}
+
+let temporizadorBiblia;
+contenido.addEventListener('change', ev => {
+  if (ev.target.id === 'biblia-libro') {
+    bibliaLibro = ev.target.value;
+    bibliaCapitulo = '1';
+    busquedaBiblia = '';
+    mostrarBiblia();
+  }
+  if (ev.target.id === 'biblia-capitulo') {
+    bibliaCapitulo = ev.target.value;
+    busquedaBiblia = '';
+    mostrarBiblia();
+  }
+});
+contenido.addEventListener('input', ev => {
+  if (ev.target.id !== 'buscar-biblia') return;
+  busquedaBiblia = ev.target.value;
+  clearTimeout(temporizadorBiblia);
+  temporizadorBiblia = setTimeout(() => buscarEnBiblia(busquedaBiblia), 180);
+});
 
 function mostrarMultimedia() {
   contenido.innerHTML = encabezadoSeccion('Multimedia', 'Himnos, grabaciones y transmisiones de los cultos.') +
