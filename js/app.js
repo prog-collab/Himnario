@@ -261,7 +261,7 @@ function renderVista() {
      configuracion: mostrarConfiguracion, noticias: mostrarNoticias,
      calendario: mostrarCalendario, biblia: mostrarBiblia,
      multimedia: mostrarMultimedia, libros: mostrarLibros, ministerios: mostrarMinisterios, recursos: mostrarRecursos,
-     donaciones: mostrarDonaciones }[vistaActual])();
+     donaciones: mostrarDonaciones, compartir: mostrarCompartir }[vistaActual])();
 }
 document.querySelectorAll('.pestana').forEach(p => {
   p.addEventListener('click', () => {
@@ -295,7 +295,7 @@ function actualizarMenu(seccion) {
   document.querySelectorAll('.menu-enlace').forEach(b =>
     b.classList.toggle('activo', b.dataset.seccion === seccion));
 }
-const SECCIONES_MENU = ['himnario', 'noticias', 'ministerios', 'calendario', 'biblia', 'multimedia', 'libros', 'recursos', 'donaciones', 'boletines', 'filiales', 'configuracion'];
+const SECCIONES_MENU = ['himnario', 'noticias', 'ministerios', 'calendario', 'biblia', 'multimedia', 'libros', 'recursos', 'donaciones', 'boletines', 'filiales', 'configuracion', 'compartir'];
 function seccionActualMenu() {
   if (!vistaFiliales.classList.contains('oculto')) return 'filiales';
   if (himnoAbierto || ['todos', 'temas', 'favoritos', 'recientes'].includes(vistaActual)) return 'himnario';
@@ -434,6 +434,17 @@ function cerrarHimno(volverScroll = true) {
 
 // Delegación de clics en las listas
 contenido.addEventListener('click', ev => {
+  const compartir = ev.target.closest('[data-compartir]');
+  if (compartir) {
+    const url = location.origin + location.pathname;
+    const texto = 'Asamblea Cristiana · Himnario, Biblia y recursos';
+    if (compartir.dataset.compartir === 'nativo' && navigator.share) {
+      navigator.share({ title: 'Asamblea Cristiana', text: texto, url }).catch(() => {});
+    } else if (compartir.dataset.compartir === 'copiar' && navigator.clipboard) {
+      navigator.clipboard.writeText(url).then(() => { compartir.textContent = '¡Link copiado!'; });
+    }
+    return;
+  }
   const ministerio = ev.target.closest('[data-ministerio]');
   if (ministerio) {
     ministerioSeleccionado = ministerio.dataset.ministerio;
@@ -746,6 +757,21 @@ function mostrarRecursos() {
 function mostrarDonaciones() {
   contenido.innerHTML = encabezadoSeccion('Donaciones', 'Información para quienes deseen colaborar con la obra.') +
     `<div class="aviso-donaciones"><h3>Datos de donación</h3><p>Los datos de transferencia y los medios habilitados se publicarán aquí cuando sean confirmados por la administración de la iglesia.</p></div></section>`;
+}
+
+function mostrarCompartir() {
+  const url = location.origin + location.pathname;
+  const texto = 'Asamblea Cristiana · Himnario, Biblia y recursos: ' + url;
+  const qr = 'https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=' + encodeURIComponent(url);
+  contenido.innerHTML = encabezadoSeccion('Compartir', 'Invitá a otros a instalar Asamblea Cristiana.') +
+    `<div class="compartir-caja"><img class="codigo-qr" src="${qr}" alt="Código QR para abrir Asamblea Cristiana">
+      <p class="compartir-link">${escaparHTML(url)}</p>
+      <div class="compartir-acciones">
+        <a class="btn-primario" href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener">WhatsApp</a>
+        <button class="btn-secundario" data-compartir="nativo">Otras apps</button>
+        <button class="btn-secundario" data-compartir="copiar">Copiar link</button>
+      </div>
+    </div></section>`;
 }
 
 /* ── Favoritos ── */

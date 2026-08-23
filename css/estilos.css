@@ -395,6 +395,11 @@ main { max-width: 720px; margin: 0 auto; padding: .8rem 1rem 3rem; }
 .aviso-donaciones { padding: 1rem; border: 1px solid var(--linea); border-radius: 8px; background: var(--papel-tarjeta); box-shadow: var(--sombra); }
 .aviso-donaciones h3 { font-family: 'Playfair Display', serif; color: var(--bordo-claro); font-size: 1.1rem; margin-bottom: .2rem; }
 .aviso-donaciones p { color: var(--tinta-suave); }
+.compartir-caja { padding: 1.2rem; text-align: center; border: 1px solid var(--linea); border-radius: 8px; background: var(--papel-tarjeta); box-shadow: var(--sombra); }
+.codigo-qr { display: block; width: min(260px, 100%); aspect-ratio: 1; margin: 0 auto 1rem; background: #fff; padding: .45rem; border-radius: 5px; }
+.compartir-link { color: var(--tinta-suave); font-size: .85rem; overflow-wrap: anywhere; }
+.compartir-acciones { display: flex; flex-wrap: wrap; justify-content: center; gap: .55rem; margin-top: 1rem; }
+.compartir-acciones a { text-decoration: none; }
 
 /* ── Biblia ── */
 .biblia-controles { display: grid; grid-template-columns: minmax(0, 1fr) 8rem; gap: .55rem; margin-bottom: .65rem; }
