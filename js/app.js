@@ -483,7 +483,12 @@ contenido.addEventListener('click', ev => {
   }
 });
 
-$('#btn-volver').addEventListener('click', () => history.length > 1 ? history.back() : cerrarHimno());
+$('#btn-volver').addEventListener('click', () => {
+  vistaActual = 'todos';
+  actualizarMenu('himnario');
+  history.replaceState({}, '', location.pathname);
+  cerrarHimno();
+});
 $('#btn-inicio').addEventListener('click', () => navegarSeccion('himnario'));
 $('#btn-anterior').addEventListener('click', () => himnoAbierto && abrirHimno(himnoAbierto.n - 1));
 $('#btn-siguiente').addEventListener('click', () => himnoAbierto && abrirHimno(himnoAbierto.n + 1));
@@ -875,9 +880,8 @@ if (hash >= 1 && hash <= 400) {
   abrirHimno(hash, false);
   history.replaceState({ himno: hash }, '', '#' + hash);
 } else if (hashStr === 'filiales') {
+  history.replaceState({}, '', location.pathname);
   renderVista();
-  abrirFiliales(false);
-  history.replaceState({ filiales: true }, '', '#filiales');
 } else {
   renderVista();
 }
