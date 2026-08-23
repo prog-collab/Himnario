@@ -405,6 +405,12 @@ function cerrarHimno(volverScroll = true) {
 
 // Delegación de clics en las listas
 contenido.addEventListener('click', ev => {
+  const ministerio = ev.target.closest('[data-ministerio]');
+  if (ministerio) {
+    ministerioSeleccionado = ministerio.dataset.ministerio;
+    mostrarMinisterios();
+    return;
+  }
   const pasaje = ev.target.closest('[data-biblia-libro]');
   if (pasaje) {
     bibliaLibro = pasaje.dataset.bibliaLibro;
@@ -520,6 +526,7 @@ let bibliaCargando = null;
 let bibliaLibro = 'Génesis';
 let bibliaCapitulo = '1';
 let busquedaBiblia = '';
+let ministerioSeleccionado = null;
 
 function escaparHTML(texto) {
   return String(texto).replace(/[&<>'"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[c]);
@@ -683,13 +690,12 @@ function mostrarLibros() {
 
 function mostrarMinisterios() {
   const ministerios = typeof MINISTERIOS === 'undefined' ? [] : MINISTERIOS;
+  const seleccionado = ministerios.find(m => m.id === ministerioSeleccionado);
   contenido.innerHTML = encabezadoSeccion('Ministerios', 'Espacios de servicio y crecimiento de la Asamblea Cristiana.') +
-    `<p class="ministerios-ayuda">Al iniciar sesión, cada hermano verá el contenido y las herramientas del ministerio que tenga asignado.</p>
-    <div class="tarjetas-seccion">${ministerios.map(ministerio => tarjetaInformativa(
-      ministerio.nombre,
-      'El acceso para sus integrantes se habilitará al configurar las cuentas de usuario.',
-      'Ministerio'
-    )).join('')}</div></section>`;
+    `${seleccionado ? `<p class="ministerios-aviso" role="status">El acceso a <strong>${escaparHTML(seleccionado.nombre)}</strong> se habilitará cuando se valide su usuario.</p>` : '<p class="ministerios-ayuda">Seleccioná un ministerio para solicitar acceso.</p>'}
+    <div class="tarjetas-seccion">${ministerios.map(m => `<button class="tarjeta-informativa tarjeta-ministerio" data-ministerio="${m.id}">
+      <span class="tarjeta-etiqueta">Ministerio</span><h3>${escaparHTML(m.nombre)}</h3><p>Acceder al espacio del ministerio.</p>
+    </button>`).join('')}</div></section>`;
 }
 
 function mostrarRecursos() {
