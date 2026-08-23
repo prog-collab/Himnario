@@ -260,7 +260,7 @@ function renderVista() {
      recientes: mostrarRecientes, boletines: mostrarBoletines,
      configuracion: mostrarConfiguracion, noticias: mostrarNoticias,
      calendario: mostrarCalendario, biblia: mostrarBiblia,
-     multimedia: mostrarMultimedia, recursos: mostrarRecursos,
+     multimedia: mostrarMultimedia, libros: mostrarLibros, recursos: mostrarRecursos,
      donaciones: mostrarDonaciones }[vistaActual])();
 }
 document.querySelectorAll('.pestana').forEach(p => {
@@ -643,6 +643,17 @@ function mostrarMultimedia() {
     `<div class="tarjetas-seccion">${tarjetaInformativa('Himnos y grabaciones', 'Audios para escuchar, aprender y compartir los himnos de la congregación.')}
       ${tarjetaInformativa('Cultos en vivo y grabaciones', 'Enlaces a las transmisiones en vivo y a los cultos ya realizados.')}
     </div></section>`;
+}
+
+function mostrarLibros() {
+  const libros = typeof LIBROS === 'undefined' ? [] : LIBROS;
+  contenido.innerHTML = encabezadoSeccion('Libros', 'Obras del Hno. José Petrelli.') +
+    (libros.length
+      ? `<div class="boletin-lista">${libros.map(libro => `<a class="boletin" href="${libro.archivo}" target="_blank" rel="noopener">
+          <span class="boletin-titulo">${libro.titulo}</span>
+          <span class="boletin-fecha">${libro.autor}</span>
+        </a>`).join('')}</div>`
+      : `<p class="mensaje-vacio">No hay libros disponibles por el momento.</p>`) + '</section>';
 }
 
 function mostrarRecursos() {

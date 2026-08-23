@@ -202,11 +202,6 @@ const BOLETINES = [
   { titulo: "Boletín Nº 003", fecha: "Febrero 1967", archivo: "boletines/voz-003.pdf", grupo: "Boletines La Voz de la Asamblea Cristiana" },
   { titulo: "Boletín Nº 002", fecha: "Diciembre 1966", archivo: "boletines/voz-002.pdf", grupo: "Boletines La Voz de la Asamblea Cristiana" },
   { titulo: "Boletín Nº 001", fecha: "Octubre 1966", archivo: "boletines/voz-001.pdf", grupo: "Boletines La Voz de la Asamblea Cristiana" },
-  { titulo: "Como en el Cielo", fecha: "Hno. José Petrelli", archivo: "boletines/libro-como-en-el-cielo.pdf", grupo: "Libros del Hno. José Petrelli" },
-  { titulo: "DAVID Pecador y Penitente", fecha: "Hno. José Petrelli", archivo: "boletines/libro-david-pecador-y-penitente.pdf", grupo: "Libros del Hno. José Petrelli" },
-  { titulo: "El Espíritu Santo", fecha: "Hno. José Petrelli", archivo: "boletines/libro-el-espiritu-santo.pdf", grupo: "Libros del Hno. José Petrelli" },
-  { titulo: "Jacob", fecha: "Hno. José Petrelli", archivo: "boletines/libro-jacob.pdf", grupo: "Libros del Hno. José Petrelli" },
-  { titulo: "Por qué crucificaron a Jesús", fecha: "Hno. José Petrelli", archivo: "boletines/libro-por-que-crucificaron-a-jesus.pdf", grupo: "Libros del Hno. José Petrelli" },
   { titulo: "Índice Alfabético de Editoriales del 001 al 200", archivo: "boletines/indice-editoriales-del-001-al-200.pdf", grupo: "Índices" },
   { titulo: "Índice Alfabético de Temas 001 al 100", archivo: "boletines/indice-temas-001-al-100.pdf", grupo: "Índices" },
   { titulo: "Índice Alfabético de Temas 101 al 200", archivo: "boletines/indice-temas-101-al-200.pdf", grupo: "Índices" }
