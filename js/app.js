@@ -520,7 +520,6 @@ function mostrarNoticias() {
     `<div class="tarjetas-seccion">
       ${tarjetaInformativa('Pedidos de oración', 'Un espacio para compartir motivos de oración de forma cuidadosa y con la debida privacidad.')}
       ${tarjetaInformativa('Hermanos enfermos', 'Información y acompañamiento para quienes necesiten oración, visita o ayuda de la congregación.')}
-      ${tarjetaInformativa('Devocional diario', 'Reflexiones breves para comenzar cada día con la Palabra de Dios.')}
       ${tarjetaInformativa('Santa Cena', 'Avisos, fechas e indicaciones de preparación para la congregación.')}
     </div></section>`;
 }
@@ -648,7 +647,10 @@ function mostrarMultimedia() {
 
 function mostrarRecursos() {
   contenido.innerHTML = encabezadoSeccion('Recursos', 'Material para aprender, consultar y compartir.') +
-    `<div class="tarjetas-seccion">${tarjetaInformativa('Doctrina', 'Enseñanzas y documentos doctrinales de la Asamblea Cristiana.')}
+    `<div class="tarjetas-seccion">${tarjetaInformativa('Lectura bíblica diaria', 'Un pasaje seleccionado para leer y meditar cada día.')}
+      ${tarjetaInformativa('Plan de lectura', 'Un plan de lectura congregacional para acompañar durante el año.')}
+      ${tarjetaInformativa('Devocional diario', 'Reflexiones breves para comenzar cada día con la Palabra de Dios.')}
+      ${tarjetaInformativa('Doctrina', 'Enseñanzas y documentos doctrinales de la Asamblea Cristiana.')}
       ${tarjetaInformativa('Material recomendado', 'Libros, estudios y recursos de lectura recomendados.')}
       ${tarjetaInformativa('Preguntas frecuentes', 'Respuestas a consultas habituales sobre la congregación y sus actividades.')}
     </div></section>`;
