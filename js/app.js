@@ -258,7 +258,10 @@ function renderVista() {
   $('#subnavegacion').classList.toggle('oculto', !esHimnario);
   ({ todos: mostrarTodos, temas: mostrarTemas, favoritos: mostrarFavoritos,
      recientes: mostrarRecientes, boletines: mostrarBoletines,
-     configuracion: mostrarConfiguracion }[vistaActual])();
+     configuracion: mostrarConfiguracion, noticias: mostrarNoticias,
+     calendario: mostrarCalendario, biblia: mostrarBiblia,
+     multimedia: mostrarMultimedia, recursos: mostrarRecursos,
+     donaciones: mostrarDonaciones }[vistaActual])();
 }
 document.querySelectorAll('.pestana').forEach(p => {
   p.addEventListener('click', () => {
@@ -377,6 +380,12 @@ function cerrarHimno(volverScroll = true) {
 
 // Delegación de clics en las listas
 contenido.addEventListener('click', ev => {
+  const calendario = ev.target.closest('[data-calendario]');
+  if (calendario) {
+    fechaCalendario.setMonth(fechaCalendario.getMonth() + Number(calendario.dataset.calendario));
+    mostrarCalendario();
+    return;
+  }
   const ajuste = ev.target.closest('[data-config-accion]');
   if (ajuste) {
     if (ajuste.dataset.configAccion === 'tema') {
@@ -444,6 +453,92 @@ function mostrarConfiguracion() {
       <button class="interruptor ${oscuro ? 'activo' : ''}" data-config-accion="tema" role="switch" aria-checked="${oscuro}" aria-label="Cambiar modo claro u oscuro"><span></span></button>
     </div>
   </section>`;
+}
+
+/* ════════════ NUEVAS SECCIONES ════════════ */
+function encabezadoSeccion(titulo, descripcion) {
+  return `<section class="pagina-seccion" aria-labelledby="titulo-seccion">
+    <h2 id="titulo-seccion">${titulo}</h2>
+    <p class="pagina-intro">${descripcion}</p>`;
+}
+
+function tarjetaInformativa(titulo, texto, etiqueta = 'Próximamente') {
+  return `<article class="tarjeta-informativa">
+    <span class="tarjeta-etiqueta">${etiqueta}</span>
+    <h3>${titulo}</h3>
+    <p>${texto}</p>
+  </article>`;
+}
+
+function mostrarNoticias() {
+  contenido.innerHTML = encabezadoSeccion('Noticias', 'Novedades y acompañamiento de la Asamblea Cristiana.') +
+    `<div class="tarjetas-seccion">
+      ${tarjetaInformativa('Pedidos de oración', 'Un espacio para compartir motivos de oración de forma cuidadosa y con la debida privacidad.')}
+      ${tarjetaInformativa('Hermanos enfermos', 'Información y acompañamiento para quienes necesiten oración, visita o ayuda de la congregación.')}
+      ${tarjetaInformativa('Devocional diario', 'Reflexiones breves para comenzar cada día con la Palabra de Dios.')}
+      ${tarjetaInformativa('Santa Cena', 'Avisos, fechas e indicaciones de preparación para la congregación.')}
+    </div></section>`;
+}
+
+let fechaCalendario = new Date();
+fechaCalendario = new Date(fechaCalendario.getFullYear(), fechaCalendario.getMonth(), 1);
+
+function mostrarCalendario() {
+  const anio = fechaCalendario.getFullYear();
+  const mes = fechaCalendario.getMonth();
+  const hoy = new Date();
+  const inicio = (new Date(anio, mes, 1).getDay() + 6) % 7;
+  const dias = new Date(anio, mes + 1, 0).getDate();
+  const nombreMes = new Intl.DateTimeFormat('es-AR', { month: 'long', year: 'numeric' }).format(fechaCalendario);
+  const celdas = Array.from({ length: inicio + dias }, (_, i) => {
+    if (i < inicio) return '<span class="calendario-dia vacio"></span>';
+    const dia = i - inicio + 1;
+    const esHoy = dia === hoy.getDate() && mes === hoy.getMonth() && anio === hoy.getFullYear();
+    return `<span class="calendario-dia ${esHoy ? 'hoy' : ''}">${dia}</span>`;
+  }).join('');
+  contenido.innerHTML = encabezadoSeccion('Calendario', 'Eventos, reuniones y fechas importantes de la iglesia.') +
+    `<div class="calendario">
+      <div class="calendario-cabecera">
+        <button class="ajuste-boton" data-calendario="-1" aria-label="Mes anterior">←</button>
+        <h3>${nombreMes}</h3>
+        <button class="ajuste-boton" data-calendario="1" aria-label="Mes siguiente">→</button>
+      </div>
+      <div class="calendario-semana" aria-hidden="true"><span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span></div>
+      <div class="calendario-dias" aria-label="${nombreMes}">${celdas}</div>
+    </div>
+    <div class="agenda-vacia">Aún no hay eventos cargados para este mes.</div>
+    <section class="eventos-anuales" aria-labelledby="eventos-anuales-titulo">
+      <h3 id="eventos-anuales-titulo">Eventos anuales</h3>
+      <p>Las fechas se confirmarán en el calendario.</p>
+      <div><span>Reuniones de jóvenes</span><span>Santa Cena</span><span>Reuniones generales</span><span>Encuentros de hermanos</span></div>
+    </section></section>`;
+}
+
+function mostrarBiblia() {
+  contenido.innerHTML = encabezadoSeccion('Biblia', 'Lecturas y recursos para meditar en la Palabra de Dios.') +
+    `<div class="tarjetas-seccion">${tarjetaInformativa('Lectura bíblica', 'Aquí se podrán consultar las lecturas bíblicas diarias y acceder a los pasajes recomendados.')}
+      ${tarjetaInformativa('Plan de lectura', 'Un plan de lectura congregacional para acompañar durante el año.')}
+    </div></section>`;
+}
+
+function mostrarMultimedia() {
+  contenido.innerHTML = encabezadoSeccion('Multimedia', 'Himnos, grabaciones y transmisiones de los cultos.') +
+    `<div class="tarjetas-seccion">${tarjetaInformativa('Himnos y grabaciones', 'Audios para escuchar, aprender y compartir los himnos de la congregación.')}
+      ${tarjetaInformativa('Cultos en vivo y grabaciones', 'Enlaces a las transmisiones en vivo y a los cultos ya realizados.')}
+    </div></section>`;
+}
+
+function mostrarRecursos() {
+  contenido.innerHTML = encabezadoSeccion('Recursos', 'Material para aprender, consultar y compartir.') +
+    `<div class="tarjetas-seccion">${tarjetaInformativa('Doctrina', 'Enseñanzas y documentos doctrinales de la Asamblea Cristiana.')}
+      ${tarjetaInformativa('Material recomendado', 'Libros, estudios y recursos de lectura recomendados.')}
+      ${tarjetaInformativa('Preguntas frecuentes', 'Respuestas a consultas habituales sobre la congregación y sus actividades.')}
+    </div></section>`;
+}
+
+function mostrarDonaciones() {
+  contenido.innerHTML = encabezadoSeccion('Donaciones', 'Información para quienes deseen colaborar con la obra.') +
+    `<div class="aviso-donaciones"><h3>Datos de donación</h3><p>Los datos de transferencia y los medios habilitados se publicarán aquí cuando sean confirmados por la administración de la iglesia.</p></div></section>`;
 }
 
 /* ── Favoritos ── */
